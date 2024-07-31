@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banco de Dados - FireStore</title>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    <label>Nome: </label>
+    <input type="text" id="Namebox">
+    <br>
+
+    <label>Rua: </label>
+    <input type="text" id="Rollbox">
+    <br>
+
+    <label>Bairro: </label>
+    <input type="text" id="Secbox">
+    <br>
+    <label>Sexo</label>
+    <select id="Genbox">
+        <option value="Masculino">Masculino</option>
+        <option value="Feminino">Feminino</option>
+    </select>
+
+    <hr>
+    <button id="Insbtn">INSERT</button>
+    <button id="Selbtn">SELECT</button>
+    <button id="Updbtn">UPDATE</button>
+    <button id="Delbtn">DELETE</button>
+
+  <!-- ========== IMPORTAÇÃO DE CONFIGURAÇÕES DO FIREBASE ========== -->
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyCe4iYHsApW4RpCl8-v0NgtUZP15RCcqsk",
+        authDomain: "firestore-bcfb7.firebaseapp.com",
+        databaseURL: "https://firestore-bcfb7-default-rtdb.firebaseio.com",
+        projectId: "firestore-bcfb7",
+        storageBucket: "firestore-bcfb7.appspot.com",
+        messagingSenderId: "405005781101",
+        appId: "1:405005781101:web:b7a64ef31fc86721a69764"
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);    
+
+      import {getDatabase, ref, get, set, child, update, remove}
+      from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+
+      const db = getDatabase();
+
+    //---------Referências------------//
+        var namebox = document.getElementById("Namebox");
+        var rollbox = document.getElementById("Rollbox");
+        var secbox = document.getElementById("Secbox");
+        var genbox = document.getElementById("Genbox");
+
+        var insBtn = document.getElementById("Insbtn");
+        var selBtn = document.getElementById("Selbtn");
+        var updBtn = document.getElementById("Updbtn");
+        var delBtn = document.getElementById("Delbtn");
+
+    //-----------INSERT DATA FUNCTION---------------//
+        function InsertData(){
+          set(ref(db, "TheStudents/"+rollbox.value),{ //Dados que aparecerão no RealTime Database//
+            NameOfStd: namebox.value,
+            RollNo: rollbox.value,
+            Section: secbox.value,
+            Gender: genbox.value
+          })
+          .then(()=>{
+            alert("data stored successfully");
+          })
+          .catch((error)=>{
+            alert("unsuccessful, error"+error);
+          });
+        }
+//-----------------Assign Events Btns--------------------------//
+      insBtn.addEventListener('click', InsertData);
+
+//------------SELECT DATA FUNCTION---------------------//
+      function SelectData (){
+        const dbref = ref(db);
+
+        get(child(dbref,"TheStudents/"+rollbox.value)).then((snapshot)=>{
+          if(snapshot.exists()){
+            namebox.value = snapshot.val().NameOfStd;
+            secbox.value = snapshot.val().Section;
+            genbox.value = snapshot.val().Gender;
+          }
+          else{
+            alert("Nenhum dado encontrado!");
+          }
+        })
+        .catch((error)=>{
+          alert("unsuccessful, error"+error);
+        });
+      }
+  </script>
+      
+</body>
+</html>
